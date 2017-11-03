@@ -1,4 +1,4 @@
-               package model;
+package model;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
@@ -11,7 +11,7 @@ public class Rating {
 	public long Id;
 	 static Long   counter = 0l;
 	 
-	 public String userId , movieId ;
+	 public Long userId , movieId ;
 	 public double ratingLeft ;
 	 
 	 public ArrayList<Movies> route = new ArrayList<Movies>();
@@ -22,7 +22,7 @@ public class Rating {
 		 
 	 }
 
-	public Rating(  String userId, String movieId, double ratingLeft) 	
+	public Rating(  Long userId, Long movieId, double ratingLeft) 	
 	{
 		this.movieId = userId;
 		this.movieId = movieId;

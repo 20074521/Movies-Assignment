@@ -10,14 +10,14 @@ public class RatingTest
 {
   private Rating[] ratings =
   {
-    new Rating ("01",  "001", 5),
-    new Rating ("02",  "002", 3 ),
-    new Rating ("03",   "003", 4),
-    new Rating ("04",  "004",  1),
-    new Rating ("05", "005", 2)
+    new Rating (01l,  001l, 5),
+    new Rating (02l,  002l, 3 ),
+    new Rating (03l,  003l, 4),
+    new Rating (04l,  004l,  1),
+    new Rating (05l,  005l, 2)
   };
 
-  Rating test = new Rating ("01",  "002", 5);
+  Rating test = new Rating (01l,  001l, 5);
 
   
 @Test

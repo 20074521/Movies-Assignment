@@ -1,19 +1,20 @@
 package controllers;
 
-
+import java.io.File;
+import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Scanner;
 
 import com.google.common.base.Optional;
-
 
 import model.Movies;
 import model.Rating;
 import model.User;
 import utils.Serializer;
 
-public class MoviesAPI
+public class MoviesAPI implements MovieAPIInterface
 
 {
 
@@ -21,7 +22,7 @@ public class MoviesAPI
 	
 	 private static Map<Long, User> userIndex = new HashMap<Long, User>();
 	 private Map<String, User> fNameIndex = new HashMap<String, User>();
-	 private static Map<Long, Rating> ratingIndex = new HashMap<Long, Rating>();
+	 private static Map<Long, Movies > movieIndex = new HashMap<Long, Movies>();
 	 
 	 public MoviesAPI() 
 	 {}
@@ -38,8 +39,7 @@ public class MoviesAPI
 	    {
 	      
 	      userIndex       = (Map<Long, User>)    serializer.pop() ;
-	      fNameIndex      = (Map<String, User>)  serializer.pop();
-	      ratingIndex     = (Map<Long, Rating>)  serializer.pop();
+	      movieIndex     = (Map<Long, Movies>)  serializer.pop();
 	     }
 	  }
 	 
@@ -47,8 +47,7 @@ public class MoviesAPI
 	  {
 	 
 		  serializer.push(userIndex);
-		  serializer.push(fNameIndex);
-		  serializer.push(ratingIndex);
+		  serializer.push(movieIndex);
 		  serializer.write();
 	 }
 	 
@@ -58,16 +57,12 @@ public class MoviesAPI
 	    return userIndex.values();
 	  }
 
-  public  void deleteUsers() 
-  {
-	  userIndex.clear();
-	  fNameIndex.clear();
-  }
-
+  
+@Override
   public User createUser(String fName, String lName, String age, String gender, String job ) 
   {
     User user = new User (fName, lName, age, gender, job );
-    userIndex.put(user.id, user);
+    userIndex.put(user.UserId, user);
     fNameIndex.put(fName, user);
     return user;
   }
@@ -82,42 +77,112 @@ public class MoviesAPI
 	  return userIndex.get(id);
   }
 
+  @Override
   public void deleteUser(Long id) 
   {
 	  User user = userIndex.remove(id);
 	  fNameIndex.remove(user.fName);
   }
-
-  public static Rating createRating(Long id ,String userId, String movieId, double ratingLeft) 
+  
+public  void deleteUsers() 
   {
-	  
-	  Rating rating = null;
-	  Optional<User> user= Optional.fromNullable(userIndex.get(id));
-	  if(user.isPresent())
-	  {
-		  rating = new Rating (userId, movieId , ratingLeft);
-		  user.get().ratings.put(rating.Id, rating);
-		  ratingIndex.put(rating.Id, rating);
-	  }
-	  return rating;
-	  
-   }
+	  userIndex.clear();
+	  fNameIndex.clear();
+  }
+
+@SuppressWarnings("unlikely-arg-type")
+public void removeUser(String fName)
+{
+	User user = userIndex.remove(fName);
+	userIndex.remove(user.fName);
+}
+
+
   
  
   
-  public Rating getRating(long id)
+
+  
+  
+  @Override
+  public Movies addMovie (long id , String name, String date ,String link )
   {
-	  return ratingIndex.get(id);
-  }
-  
-  
-  
-  public void addMovie (long id , String name, String date ,String link )
-  {
-	  Optional<Rating> rating = Optional.fromNullable(ratingIndex.get(id));
-	  if(rating.isPresent())
+	  Movies movies = null;
+	  Optional<User> user = Optional.fromNullable(userIndex.get(id));
+	  if(user.isPresent())
 	  {
-		  rating.get().route.add(new Movies(name, date, link));
+		  movies = new Movies(name , date, link);
+		  user.get().movies.put(movies.MovieId , movies);
+		  movieIndex.put(movies.MovieId , movies);
 	  }
+	  return movies;
   }
+  @Override
+
+public Movies getMovie(Long id) 
+{
+	return movieIndex.get(id);
+}
+  
+public void initalLoad() throws IOException {
+	String delims = "[|]";
+	Scanner scanner = new Scanner(new File("datastore"));
+	while (scanner.hasNextLine()) {
+		String userDetails = scanner.nextLine();
+		// parse user details string
+		String[] userTokens = userDetails.split(delims);
+
+		if (userTokens.length == 7) {
+			createUser(userTokens[1], userTokens[2], userTokens[3], userTokens[4], userTokens[5]);
+		} else {
+			scanner.close();
+			throw new IOException("Invalid member length: " + userTokens.length);
+		}
+	}
+	scanner.close();
+}
+
+
+
+
+
+
+
+
+
+
+
+@Override
+public Rating createRating(Long userID, Long movieID, double ratingLeft) {
+	Optional <Movies> movies = Optional .fromNullable(movieIndex.get(movieID));
+	 if (movies.isPresent())
+	 {
+		 movies.get().movie.add(new Rating(userID , movieID , ratingLeft));
+	 }
+	return null;
+}
+
+
+
+
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
 }

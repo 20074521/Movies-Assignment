@@ -10,13 +10,13 @@ import com.google.common.base.Objects;
 public class User {
 	
  public String fName, lName, Age, Gender, Job ;
- public long id;
- static Long   counter = 0l;
+ public long UserId;
+public static Long   counter = 0l;
  
- public Map<Long , Rating> ratings = new HashMap<Long , Rating>();
+ public Map<Long , Movies> movies = new HashMap<Long , Movies>();
  
  public User() {
-	 
+
  }
 
 public User(String fName, String lName, String age, String gender, String job ) {
@@ -26,7 +26,7 @@ public User(String fName, String lName, String age, String gender, String job ) 
 	this.Age = age;
 	this.Gender = gender;
 	this.Job = job;
-	this.id = counter++ ;
+	this.UserId = counter++ ;
 }
 
 @Override
@@ -37,7 +37,7 @@ public String toString()
                              .addValue(Age)
                              .addValue(Gender)   
                              .addValue(Job) 
-                             .addValue(id) 
+                             .addValue(UserId) 
                              .toString();
 }
 
@@ -59,7 +59,7 @@ public boolean equals(final Object obj)
 				&& Objects.equal(Age, other.Age)
 				&& Objects.equal(Gender, other.Gender)
 				&& Objects.equal(Job, other.Job)
-				&& Objects.equal(id, other.id);
+				&& Objects.equal(UserId, other.UserId);
 	}
 	else
 	{

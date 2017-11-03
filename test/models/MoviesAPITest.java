@@ -7,12 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 
 import controllers.MoviesAPI;
-import model.Rating;
 import model.User;
 
 import static models.Fixtures.users;
-import static models.Fixtures.ratings;
-import static models.Fixtures.movie;
 
 public class MoviesAPITest {
 	
@@ -60,22 +57,10 @@ public class MoviesAPITest {
 	  {
 	    assertEquals (users.length, movies.getUsers().size());
 	    User marge = movies.getUserByfName("marge");
-	    movies.deleteUser(marge.id);
+	    movies.deleteUser(marge.UserId);
 	    assertEquals (users.length-1, movies.getUsers().size());    
 	  }  
 	 
-	 @Test
-	  public void testAddRating()
-	  {
-	    User marge = movies.getUserByfName("marge");
-	    assertNotNull(marge);
-	    Rating rating = movies.createRating(marge.id, ratings[0].userId, ratings[0].movieId, ratings[0].ratingLeft);
-	    assertNotNull(rating);
-	    Rating returnedRating = movies.getRating(rating.Id);
-	    assertNotNull(returnedRating);
-	    assertEquals(ratings[0],  returnedRating);
-	    assertNotSame(ratings[0], returnedRating);
-	  }
 }
 	 
 	 

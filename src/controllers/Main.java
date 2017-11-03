@@ -1,53 +1,185 @@
 package controllers;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collection;
-import java.util.Scanner;
+import com.google.common.base.Optional;
 
+import model.Movies;
 import model.User;
 import utils.Serializer;
 import utils.XMLSerializer;
 
 public class Main
 {
-  public static void main(String[] args) throws Exception
-  {    
-	  File  datastore = new File("datastore2.xml");
-    Serializer serializer = new XMLSerializer(datastore);
+		public MoviesAPI movie;
+	
+	public Main() throws Exception {
+		File movies = new File ("datastore");
+		Serializer serializer = new XMLSerializer(movies);
+		movie = new MoviesAPI(serializer);
+		if(movies.isFile())
+		{
+			movie.load();
+		}
+	}
+	
+	public static void Menu()
+	{
+		System.out.println("1. Create User");
+		System.out.println("2. Get User by First Name");
+		System.out.println("3  delete User");
+		System.out.println("4. Add Movie");
+		System.out.println("5. Add Ratings");
+		System.out.println("6. Store");
+		System.out.println("7. Exit");
+		
+	}
+	
+	public static void main(String[] args) throws Exception 
+	{
+		Main api = new Main();
+		String /* users*/fName, lName, gender, age, job,/* movies*/ name, date, link ;
+		
+		long /*ratings*/ movieId , UserId;;
+		int choice=0;
+		double /*ratings*/rateingLeft;
+		char answer;
+		
+	
+	api.movie.initalLoad();
+	do {
+		Menu();
+		System.out.println("Please select an option between 1-7: ");
+		choice= EasyScanner.nextInt();
+		
+		switch (choice)
+		{
+		case 1:
+			   System.out.println("Enter your first name: ");
+		       fName = EasyScanner.nextString();
+		       
+		       System.out.println("Enter your last name: ");
+		       lName = EasyScanner.nextString();
+		       
+		       System.out.println("Enter your age: ");
+		       age = EasyScanner.nextString();
+		       
+		       System.out.println("Enter your gender: ");
+		       gender = EasyScanner.nextString();
+		       
+		       System.out.println("Enter your job: ");
+		       job = EasyScanner.nextString();
+		       
+		       api.addUser(fName, lName, age, gender, job);
+		       api.movie.store();		     			       
+		break;
+		
+		case 2:
+			 System.out.println("Get user by name: ");
+			 fName = EasyScanner.nextString();
+	         api.getUserByfName(fName);
+	         api.getAllUsers();
+		break;
+		
+		case 3:
+			  System.out.println("Please enter the name of who you want to remove: ");
+		      fName = EasyScanner.nextString();
+		      api.deleteUser(fName);
+		      
+		break;
+		
+		case 4:			
+			   System.out.println("Enter the movie Id: ");
+		       movieId = EasyScanner.nextLong();
+		       
+			   System.out.println("Enter the movie Title: ");
+		       name = EasyScanner.nextString();
+		        
+		       System.out.println("Enter date movie was releasd: ");
+		       date = EasyScanner.nextString();
+		       
+		       System.out.println("Enter url link of movie: ");
+		       link = EasyScanner.nextString();
+		       
+		       api.addMovie(movieId, name, date, link);
+		       api.movie.store();	
+		break;
+				
+		case 5:		     
+			   System.out.println("Enter your user ID: ");
+		       UserId = EasyScanner.nextLong();
+		       
+		       System.out.println("Enter movie ID: ");
+		       movieId = EasyScanner.nextLong();
+		        
+		       System.out.println("Enter ratings: ");
+		       rateingLeft = EasyScanner.nextDouble();
+		       
+		       api.addRatings(UserId, movieId,  rateingLeft);
+		break;
+			
+		case 6:
+			 System.out.println("Would you like to store the data entered? [y/n]: ");
+			 answer = EasyScanner.nextChar();
+			 if (answer == 'y' || answer == 'Y')
+			 {
+				 api.movie.store();
+			 }
+		break;
+			
+		case 7:
+			 System.out.println("Thank you for using Fovie. Goodbye");
+		break;
+			
+		default:
+			 System.out.println("Please ONLY choose options 1-7 .Thank you");
+		break;
+		}
+		
+	}while(choice!=7);
+	
+}
 
-  MoviesAPI moviesAPI = new MoviesAPI(serializer);
-    if (datastore.isFile())
-    {
-      moviesAPI.load();
-    }
-    
-    String delims = "[|]";
-    Scanner scanner = new Scanner(new File("./moviedata_small/users5.dat"));
-    while (scanner.hasNextLine()) {
-        String userDetails = scanner.nextLine();
-        // parse user details string
-        String[] userTokens = userDetails.split(delims);
+	private void addRatings(long UserId, long movieId, double rateingLeft) {
+		Optional<Movies> ratings = Optional.fromNullable(movie.getMovie(movieId));
+		if(ratings.isPresent())
+		{
+			movie.createRating( UserId,movieId, rateingLeft);
+		}
+		
+	}
 
-        if (userTokens.length == 7) {
-            System.out.println("UserID: " + userTokens[0] + ",First Name:" + userTokens[1]);
-        } else {
-            scanner.close();
-            throw new IOException("Invalid member length: " + userTokens.length);
-        }
-    }
-    scanner.close();
+	private void deleteUser(String fName) {
+		Optional<User> user = Optional.fromNullable(movie.getUserByfName(fName));
+		if(user.isPresent())
+		{
+			movie.deleteUser(user.get().UserId);
+		}
+		
+	}
 
-    /* moviesAPI.createUser("Bart",  "Simpson", "12",  "male", "N/A");
-     moviesAPI.createUser("Homer", "Simpson", "34", "male", "Power Plant");
-     moviesAPI.createUser("Lisa",  "Simpson", "10",  "female", "N/A");
+	private void getAllUsers() {
+		Collection<User> user = movie.getUsers();
+		System.out.println(user);
+	}
 
-    Collection<User> users = moviesAPI.getUsers();
-    System.out.println(users);
+	private void getUserByfName(String fName) {
+		User user = movie.getUserByfName(fName);
+		System.out.println(user);
+		
+	}
 
-    User homer = moviesAPI.getUserByfName("homer");
-  moviesAPI.createRating(homer.id, "001", "0001", 6.9);*/
+	private void addUser(String fName, String lName, String age, String gender, String job) {
+		movie.createUser(fName, lName, age, gender, job);
+		
+	}
 
-    moviesAPI.store();
-  }
-}	
+	private void addMovie(long Id, String name, String date, String link) {
+		Optional<User> movies = Optional.fromNullable(movie.getUser(Id));
+		if(movies.isPresent())
+		{
+			movie.addMovie(Id, name, date, link);
+		}
+		
+	}
+}

@@ -2,18 +2,21 @@ package model;
 
 import static com.google.common.base.MoreObjects.toStringHelper;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.google.common.base.Objects;
 
 public class Movies {
 
 	public long MovieId;
-	 static Long   counter = 0l;
+	public static Long   counter = 0l;
+	public String Name , date , link ;
+	
+	
+	 public List<Rating> movie  = new ArrayList<>();
 	 
-	 public String Name , date , link ;
-	 
-	 public Movies()
-	 {
-	 }
+	
 
 	public Movies( String name, String date, String link) {
 		
