@@ -142,16 +142,6 @@ public void initalLoad() throws IOException {
 	scanner.close();
 }
 
-
-
-
-
-
-
-
-
-
-
 @Override
 public Rating createRating(Long userID, Long movieID, double ratingLeft) {
 	Optional <Movies> movies = Optional .fromNullable(movieIndex.get(movieID));
@@ -161,28 +151,4 @@ public Rating createRating(Long userID, Long movieID, double ratingLeft) {
 	 }
 	return null;
 }
-
-
-
-
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
 }

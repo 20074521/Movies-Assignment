@@ -128,7 +128,7 @@ public class Main
 		break;
 			
 		case 7:
-			 System.out.println("Thank you for using Fovie. Goodbye");
+			 System.out.println("Thank you. Goodbye");
 		break;
 			
 		default:

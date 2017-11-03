@@ -23,8 +23,8 @@ public class RatingTest
 @Test
   public void testCreate()
   {
-    assertEquals ("01",          test.userId);
-    assertEquals ("001",        test.movieId);
+    assertEquals ("01l",          test.userId);
+    assertEquals ("001l",        test.movieId);
     assertEquals ( 5 ,  test.ratingLeft, 5);    
   }
 
