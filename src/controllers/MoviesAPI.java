@@ -126,7 +126,7 @@ public Movies getMovie(Long id)
   
 public void initalLoad() throws IOException {
 	String delims = "[|]";
-	Scanner scanner = new Scanner(new File("datastore"));
+	Scanner scanner = new Scanner(new File("./data/users5.dat"));
 	while (scanner.hasNextLine()) {
 		String userDetails = scanner.nextLine();
 		// parse user details string

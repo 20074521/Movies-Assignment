@@ -14,7 +14,7 @@ public class Main
 		public MoviesAPI movie;
 	
 	public Main() throws Exception {
-		File movies = new File ("datastore");
+		File movies = new File ("datastore.xml");
 		Serializer serializer = new XMLSerializer(movies);
 		movie = new MoviesAPI(serializer);
 		if(movies.isFile())
